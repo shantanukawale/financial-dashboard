@@ -1,5 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
 
 // Custom components to replace the imported ones
 const Card = ({ className, children }) => (
@@ -94,6 +99,57 @@ const FinancialProjectionDashboard = () => {
 
   const formatCrore = (value) => {
     return (value / 10000000).toFixed(2) + " Cr";
+  };
+
+  const chartData = {
+    labels: results.map(row => row.year),
+    datasets: [
+      {
+        label: 'Portfolio Value',
+        data: results.map(row => row.portfolio / 10000000), // Convert to Crores
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      },
+      {
+        label: 'Annual Income',
+        data: results.map(row => row.income / 10000000), // Convert to Crores
+        borderColor: 'rgb(255, 99, 132)',
+        tension: 0.1
+      },
+      {
+        label: 'Annual Expenses',
+        data: results.map(row => row.expenses / 10000000), // Convert to Crores
+        borderColor: 'rgb(255, 205, 86)',
+        tension: 0.1
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Financial Projection Over Time',
+      },
+    },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: 'Amount (Crores)'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Year'
+        }
+      }
+    }
   };
 
   return (
@@ -215,6 +271,9 @@ const FinancialProjectionDashboard = () => {
             <h3 className="text-lg font-semibold mb-2">Projection Results</h3>
             <p>Years to reach target: {results.length - 1}</p>
             <p>Final portfolio value: {formatCrore(results[results.length - 1].portfolio)}</p>
+            <div className="mt-4 mb-4 h-96">
+              <Line data={chartData} options={chartOptions} />
+            </div>
             <div className="mt-4 max-h-96 overflow-y-auto">
               <table className="w-full border-collapse">
                 <thead>
