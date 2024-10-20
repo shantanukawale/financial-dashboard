@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import classNames from 'classnames';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, annotationPlugin);
 
 
 // Custom components to replace the imported ones
@@ -135,9 +136,28 @@ const FinancialProjectionDashboard = () => {
         display: true,
         text: 'Financial Projection Over Time',
       },
+      annotation: {
+        annotations: {
+          targetLine: {
+            type: 'line',
+            yMin: params.targetValue / 10000000, // Convert to Crores
+            yMax: params.targetValue / 10000000, // Convert to Crores
+            borderColor: 'rgb(255, 0, 0)',
+            borderWidth: 2,
+            borderDash: [6, 6],
+            label: {
+              display: true,
+              content: 'Target Value',
+              position: 'end'
+            }
+          }
+        }
+      }
     },
     scales: {
       y: {
+        min: 0,
+        max: Math.max(params.targetValue / 10000000, ...results.map(row => row.portfolio / 10000000)) * 1.1,
         title: {
           display: true,
           text: 'Amount (Crores)'
