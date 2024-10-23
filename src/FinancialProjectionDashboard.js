@@ -148,7 +148,7 @@ const FinancialProjectionDashboard = () => {
             label: {
               display: true,
               content: 'Target Value',
-              position: 'end'
+              position: 'start'
             }
           }
         }
