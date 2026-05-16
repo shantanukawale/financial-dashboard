@@ -84,17 +84,27 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 // Custom components to replace the imported ones
 const Card = ({ className, children }) => (
-  <div className={classNames('overflow-visible bg-white shadow-md rounded-lg', className)}>{children}</div>
+  <div
+    className={classNames(
+      'overflow-visible rounded-2xl border border-white/70 bg-white/85 shadow-soft ring-1 ring-slate-900/[0.04] backdrop-blur-sm',
+      className,
+    )}
+  >
+    {children}
+  </div>
 );
 
 const CardContent = ({ children, className }) => (
-  <div className={classNames('p-4', className)}>{children}</div>
+  <div className={classNames('p-5 sm:p-6', className)}>{children}</div>
 );
 
 const Input = React.forwardRef(({ className, ...props }, ref) => (
   <input
     ref={ref}
-    className={classNames('border rounded px-2 py-1 w-full', className)}
+    className={classNames(
+      'w-full rounded-lg border border-slate-200/90 bg-white/95 px-3 py-2 text-slate-900 shadow-inner shadow-slate-200/40 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20',
+      className,
+    )}
     {...props}
   />
 ));
@@ -102,13 +112,16 @@ Input.displayName = 'Input';
 
 const Button = ({ className, ...props }) => (
   <button
-    className={classNames('bg-blue-500 text-white px-4 py-2 rounded', className)}
+    className={classNames(
+      'rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-teal-700/25 transition hover:from-teal-500 hover:to-emerald-500 hover:shadow-lg hover:shadow-teal-600/30 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:ring-offset-2 active:scale-[0.99]',
+      className,
+    )}
     {...props}
   />
 );
 
 const Label = ({ htmlFor, children, className }) => (
-  <label htmlFor={htmlFor} className={classNames('block mb-1', className)}>
+  <label htmlFor={htmlFor} className={classNames('mb-0 block text-sm font-medium text-slate-600', className)}>
     {children}
   </label>
 );
@@ -119,14 +132,14 @@ function InfoHint({ text, label, className }) {
     <span className={classNames('group/hint relative inline-flex shrink-0', className)}>
       <button
         type="button"
-        className="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-slate-400 bg-white text-[10px] font-semibold italic leading-none text-slate-600 shadow-sm hover:border-slate-500 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        className="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-teal-300/80 bg-teal-50 text-[10px] font-semibold italic leading-none text-teal-800 shadow-sm transition hover:border-teal-400 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-1"
         aria-label={label}
       >
         i
       </button>
       <p
         role="tooltip"
-        className="pointer-events-none absolute right-0 top-full z-[100] mt-1 w-64 max-w-[min(22rem,calc(100vw-2rem))] rounded-md border border-slate-600 bg-slate-900 px-2.5 py-2 text-left text-xs font-normal not-italic leading-snug text-white shadow-xl opacity-0 transition-opacity duration-150 group-hover/hint:opacity-100 group-focus-within/hint:opacity-100"
+        className="pointer-events-none absolute right-0 top-full z-[100] mt-1.5 w-64 max-w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-slate-700/80 bg-slate-900/95 px-3 py-2.5 text-left text-xs font-normal not-italic leading-snug text-slate-100 shadow-glow opacity-0 backdrop-blur-sm transition-opacity duration-150 group-hover/hint:opacity-100 group-focus-within/hint:opacity-100"
       >
         {text}
       </p>
@@ -317,20 +330,32 @@ const FinancialProjectionDashboard = () => {
         {
           label: 'Portfolio Value',
           data: results.map((row) => row.portfolio / chartDivisor),
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1,
+          borderColor: 'rgb(13 148 136)',
+          backgroundColor: 'rgba(13, 148, 136, 0.08)',
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
         {
           label: 'Annual Income',
           data: results.map((row) => row.income / chartDivisor),
-          borderColor: 'rgb(255, 99, 132)',
-          tension: 0.1,
+          borderColor: 'rgb(99 102 241)',
+          backgroundColor: 'rgba(99, 102, 241, 0.06)',
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
         {
           label: 'Annual Expenses',
           data: results.map((row) => row.expenses / chartDivisor),
-          borderColor: 'rgb(255, 205, 86)',
-          tension: 0.1,
+          borderColor: 'rgb(217 119 6)',
+          backgroundColor: 'rgba(217, 119, 6, 0.06)',
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
       ],
     }),
@@ -347,15 +372,31 @@ const FinancialProjectionDashboard = () => {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
       plugins: {
         legend: {
           position: 'top',
+          labels: {
+            color: '#475569',
+            usePointStyle: true,
+            pointStyle: 'circle',
+            padding: 18,
+            font: { size: 12, family: "'DM Sans', sans-serif" },
+          },
         },
         title: {
           display: true,
           text: 'Financial Projection Over Time',
+          color: '#0f172a',
+          font: { size: 16, weight: '600', family: "'DM Sans', sans-serif" },
+          padding: { bottom: 8 },
         },
         tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.92)',
+          titleFont: { size: 12, weight: '600', family: "'DM Sans', sans-serif" },
+          bodyFont: { size: 12, family: "'DM Sans', sans-serif" },
+          padding: 12,
+          cornerRadius: 10,
           callbacks: {
             label(ctx) {
               const y = ctx.parsed?.y;
@@ -371,13 +412,18 @@ const FinancialProjectionDashboard = () => {
               type: 'line',
               yMin: targetScaled,
               yMax: targetScaled,
-              borderColor: 'rgb(255, 0, 0)',
+              borderColor: 'rgb(225 29 72)',
               borderWidth: 2,
-              borderDash: [6, 6],
+              borderDash: [8, 6],
               label: {
                 display: true,
                 content: 'Target Value',
                 position: 'start',
+                color: '#fff',
+                backgroundColor: 'rgba(225, 29, 72, 0.92)',
+                borderRadius: 6,
+                padding: 6,
+                font: { size: 11, weight: '600', family: "'DM Sans', sans-serif" },
               },
             },
           },
@@ -387,15 +433,32 @@ const FinancialProjectionDashboard = () => {
         y: {
           min: 0,
           max: yMax || 1,
+          grid: {
+            color: 'rgba(148, 163, 184, 0.22)',
+            drawBorder: false,
+          },
+          ticks: {
+            color: '#64748b',
+            font: { size: 11, family: "'DM Sans', sans-serif" },
+          },
           title: {
             display: true,
             text: `Amount (${chartUnitLabel})`,
+            color: '#475569',
+            font: { size: 12, weight: '600', family: "'DM Sans', sans-serif" },
           },
         },
         x: {
+          grid: { display: false },
+          ticks: {
+            color: '#64748b',
+            font: { size: 11, family: "'DM Sans', sans-serif" },
+          },
           title: {
             display: true,
             text: 'Year',
+            color: '#475569',
+            font: { size: 12, weight: '600', family: "'DM Sans', sans-serif" },
           },
         },
       },
@@ -405,7 +468,7 @@ const FinancialProjectionDashboard = () => {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="overflow-visible">
-        <div className="mb-4 grid grid-cols-2 gap-4 overflow-visible">
+        <div className="mb-6 grid grid-cols-2 gap-x-4 gap-y-5 overflow-visible">
           <div>
             <div className="mb-1 flex items-center gap-1.5">
               <Label htmlFor="initialPortfolio" className="mb-0 min-w-0 flex-1">
@@ -575,7 +638,7 @@ const FinancialProjectionDashboard = () => {
               name="adjustForInflation"
               checked={params.adjustForInflation}
               onChange={handleInputChange}
-              className="form-checkbox h-5 w-5 shrink-0 text-blue-600"
+              className="h-5 w-5 shrink-0 rounded border-slate-300 text-teal-600 accent-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/35"
             />
             <Label htmlFor="adjustForInflation" className="mb-0 min-w-0 flex-1">
               Adjust for Inflation
@@ -601,23 +664,40 @@ const FinancialProjectionDashboard = () => {
           />
         </div>
         {results.length > 0 && (
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Projection Results</h3>
-            <p>Years to reach target: {results.length - 1}</p>
-            <p>Final portfolio value: {formatMoney(results[results.length - 1].portfolio)}</p>
-            <div className="mt-4 mb-4 h-96">
-              <Line data={chartData} options={chartOptions} />
+          <div className="mt-2 border-t border-slate-200/80 pt-6">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">Projection results</h3>
+              <p className="text-sm text-slate-500">Based on your inputs and growth assumptions.</p>
             </div>
-            <div className="mt-4 max-h-96 overflow-y-auto">
-              <table className="w-full border-separate border-spacing-0">
+            <div className="mb-6 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-teal-100 bg-gradient-to-br from-teal-50 to-emerald-50/80 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-teal-800/80">Years to target</p>
+                <p className="mt-1 text-2xl font-bold tabular-nums text-teal-950">{results.length - 1}</p>
+              </div>
+              <div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50/70 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-indigo-800/80">Final portfolio</p>
+                <p className="mt-1 text-2xl font-bold tabular-nums text-indigo-950">
+                  {formatMoney(results[results.length - 1].portfolio)}
+                </p>
+              </div>
+            </div>
+            <div className="mb-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white/60 p-3 shadow-inner shadow-slate-200/40 sm:p-4">
+              <div className="h-96">
+                <Line data={chartData} options={chartOptions} />
+              </div>
+            </div>
+            <div className="mt-2 max-h-96 overflow-hidden rounded-xl border border-slate-200/80 shadow-sm">
+              <div className="max-h-96 overflow-y-auto">
+              <table className="w-full border-separate border-spacing-0 text-sm">
                 <thead>
                   <tr>
                     {PROJECTION_TABLE_COLUMNS.map((label, i) => (
                       <th
                         key={label}
                         className={classNames(
-                          'sticky top-0 z-10 border-b border-r border-t border-gray-300 bg-gray-100 p-2 shadow-[0_1px_0_0_rgb(209_213_219)]',
-                          i === 0 && 'border-l',
+                          'sticky top-0 z-10 border-b border-slate-200/90 bg-gradient-to-b from-slate-100 to-slate-50 px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-[inset_0_-1px_0_0_rgb(226_232_240)]',
+                          i === 0 && 'rounded-tl-xl',
+                          i === PROJECTION_TABLE_COLUMNS.length - 1 && 'rounded-tr-xl',
                         )}
                       >
                         {label}
@@ -626,18 +706,35 @@ const FinancialProjectionDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {results.map((row) => (
-                    <tr key={row.year} className="hover:bg-gray-50">
-                      <td className="border-b border-l border-r border-gray-300 p-2">{row.year}</td>
-                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.portfolio)}</td>
-                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.growth)}</td>
-                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.investment)}</td>
-                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.income)}</td>
-                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.expenses)}</td>
+                  {results.map((row, idx) => (
+                    <tr
+                      key={row.year}
+                      className={classNames(
+                        'transition-colors hover:bg-teal-50/50',
+                        idx % 2 === 1 && 'bg-slate-50/60',
+                      )}
+                    >
+                      <td className="border-b border-slate-100 px-3 py-2 font-medium text-slate-700">{row.year}</td>
+                      <td className="border-b border-slate-100 px-3 py-2 tabular-nums text-slate-800">
+                        {formatMoney(row.portfolio)}
+                      </td>
+                      <td className="border-b border-slate-100 px-3 py-2 tabular-nums text-slate-700">
+                        {formatMoney(row.growth)}
+                      </td>
+                      <td className="border-b border-slate-100 px-3 py-2 tabular-nums text-slate-700">
+                        {formatMoney(row.investment)}
+                      </td>
+                      <td className="border-b border-slate-100 px-3 py-2 tabular-nums text-indigo-900/90">
+                        {formatMoney(row.income)}
+                      </td>
+                      <td className="border-b border-slate-100 px-3 py-2 tabular-nums text-amber-900/90">
+                        {formatMoney(row.expenses)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
