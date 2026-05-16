@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { fetchUsdQuotedRates } from './exchangeRates';
 
 const STORAGE_KEY = 'financial-dashboard-currency';
 
@@ -124,7 +125,31 @@ export function CurrencyProvider({ children }) {
     return 'INR';
   });
 
+  const [ratesState, setRatesState] = useState({
+    status: 'loading',
+    ratesUsd: null,
+    date: null,
+    error: null,
+  });
+
+  const loadRates = useCallback(async () => {
+    setRatesState((s) => ({ ...s, status: 'loading', error: null }));
+    try {
+      const codes = SUPPORTED_CURRENCIES.map((c) => c.code);
+      const { date, ratesUsd } = await fetchUsdQuotedRates(codes);
+      setRatesState({ status: 'ready', ratesUsd, date, error: null });
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Could not load exchange rates';
+      setRatesState({ status: 'error', ratesUsd: null, date: null, error: message });
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRates();
+  }, [loadRates]);
+
   const setCurrency = (code) => {
+    if (!SUPPORTED_CURRENCIES.some((c) => c.code === code)) return;
     setCurrencyState(code);
     try {
       localStorage.setItem(STORAGE_KEY, code);
@@ -137,13 +162,18 @@ export function CurrencyProvider({ children }) {
     () => ({
       currency,
       setCurrency,
+      ratesUsd: ratesState.ratesUsd,
+      ratesStatus: ratesState.status,
+      ratesDate: ratesState.date,
+      ratesError: ratesState.error,
+      refreshRates: loadRates,
       formatMoney: (amount) => formatCompactMoney(amount, currency),
       formatMoneyInputDisplay: (amount) => formatMoneyInputDisplay(amount, currency),
       parseMoneyInput: (draft) => parseMoneyInput(draft, currency),
       chartScale: getChartMoneyScale(currency),
       currencySymbol: getCurrencySymbol(currency),
     }),
-    [currency]
+    [currency, ratesState, loadRates]
   );
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
