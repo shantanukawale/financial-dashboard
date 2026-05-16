@@ -20,6 +20,15 @@ const MONEY_FIELD_NAMES = new Set([
   'initialPostTaxIncome',
 ]);
 
+const PROJECTION_TABLE_COLUMNS = [
+  'Year',
+  'Portfolio Value',
+  'Annual Growth',
+  'Annual Investment',
+  'Annual Income',
+  'Annual Expenses',
+];
+
 /** Help copy for each field — shown when the small info icon is hovered or focused. */
 const FIELD_TOOLTIPS = {
   initialPortfolio:
@@ -77,8 +86,6 @@ const Card = ({ className, children }) => (
   <div className={classNames('overflow-visible bg-white shadow-md rounded-lg', className)}>{children}</div>
 );
 
-const CardHeader = ({ children }) => <div className="p-4 border-b">{children}</div>;
-const CardTitle = ({ children }) => <h2 className="text-xl font-bold">{children}</h2>;
 const CardContent = ({ children, className }) => (
   <div className={classNames('p-4', className)}>{children}</div>
 );
@@ -368,9 +375,6 @@ const FinancialProjectionDashboard = () => {
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>Financial Projection Dashboard</CardTitle>
-      </CardHeader>
       <CardContent className="overflow-visible">
         <div className="mb-4 grid grid-cols-2 gap-4 overflow-visible">
           <div>
@@ -576,26 +580,31 @@ const FinancialProjectionDashboard = () => {
               <Line data={chartData} options={chartOptions} />
             </div>
             <div className="mt-4 max-h-96 overflow-y-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full border-separate border-spacing-0">
                 <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border p-2">Year</th>
-                    <th className="border p-2">Portfolio Value</th>
-                    <th className="border p-2">Annual Growth</th>
-                    <th className="border p-2">Annual Investment</th>
-                    <th className="border p-2">Annual Income</th>
-                    <th className="border p-2">Annual Expenses</th>
+                  <tr>
+                    {PROJECTION_TABLE_COLUMNS.map((label, i) => (
+                      <th
+                        key={label}
+                        className={classNames(
+                          'sticky top-0 z-10 border-b border-r border-t border-gray-300 bg-gray-100 p-2 shadow-[0_1px_0_0_rgb(209_213_219)]',
+                          i === 0 && 'border-l',
+                        )}
+                      >
+                        {label}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {results.map((row) => (
                     <tr key={row.year} className="hover:bg-gray-50">
-                      <td className="border p-2">{row.year}</td>
-                      <td className="border p-2">{formatMoney(row.portfolio)}</td>
-                      <td className="border p-2">{formatMoney(row.growth)}</td>
-                      <td className="border p-2">{formatMoney(row.investment)}</td>
-                      <td className="border p-2">{formatMoney(row.income)}</td>
-                      <td className="border p-2">{formatMoney(row.expenses)}</td>
+                      <td className="border-b border-l border-r border-gray-300 p-2">{row.year}</td>
+                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.portfolio)}</td>
+                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.growth)}</td>
+                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.investment)}</td>
+                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.income)}</td>
+                      <td className="border-b border-r border-gray-300 p-2">{formatMoney(row.expenses)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -7,7 +7,8 @@ function CurrencyBar() {
 
   return (
     <header className="w-full border-b border-slate-200 bg-slate-50">
-      <div className="mx-auto flex max-w-4xl justify-end px-4 py-3">
+      <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-3">
+        <h1 className="text-xl font-bold text-slate-900">Financial Projection Dashboard</h1>
         <select
           aria-label="Currency"
           className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
