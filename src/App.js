@@ -16,11 +16,21 @@ function CurrencyBar() {
     <header className="relative w-full border-b border-teal-200/40 bg-white/70 shadow-sm shadow-teal-900/5 backdrop-blur-md">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/60 to-transparent" />
       <div className="mx-auto flex max-w-4xl flex-wrap items-start justify-between gap-3 px-4 py-4 sm:items-center">
-        <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-teal-700/90">Projection</p>
-          <h1 className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-800 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
-            Financial Projection Dashboard
-          </h1>
+        <div className="flex min-w-0 items-center gap-3">
+          <img
+            src={`${process.env.PUBLIC_URL}/favicon.svg`}
+            alt=""
+            width={40}
+            height={40}
+            className="h-9 w-9 shrink-0 rounded-md border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/5 sm:h-10 sm:w-10"
+            decoding="async"
+          />
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wider text-teal-700/90">Projection</p>
+            <h1 className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-800 bg-clip-text text-xl font-bold tracking-tight text-transparent sm:text-2xl">
+              Financial Projection Dashboard
+            </h1>
+          </div>
         </div>
         <div className="flex min-w-0 flex-col items-stretch gap-1.5 sm:items-end">
           {ratesStatus === 'loading' && (
