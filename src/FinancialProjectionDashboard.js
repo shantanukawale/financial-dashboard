@@ -11,6 +11,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { useCurrency } from './CurrencyContext';
+import { convertAmountRounded } from './exchangeRates';
 import { normalizeRatePercentInputValue, wholePercentToDecimal, formatRatePercentForInput } from './rateFieldUtils';
 
 const MONEY_FIELD_NAMES = new Set([
@@ -134,7 +135,15 @@ function InfoHint({ text, label, className }) {
 }
 
 const FinancialProjectionDashboard = () => {
-  const { currency, formatMoney, formatMoneyInputDisplay, parseMoneyInput, chartScale } = useCurrency();
+  const {
+    currency,
+    formatMoney,
+    formatMoneyInputDisplay,
+    parseMoneyInput,
+    chartScale,
+    ratesUsd,
+    ratesStatus,
+  } = useCurrency();
 
   const [moneyFocus, setMoneyFocus] = useState(null);
   const moneyFieldRefs = useRef({});
@@ -171,6 +180,26 @@ const FinancialProjectionDashboard = () => {
   });
 
   const [results, setResults] = useState([]);
+  const prevCurrencyRef = useRef(currency);
+
+  useEffect(() => {
+    if (ratesStatus !== 'ready' || !ratesUsd) {
+      prevCurrencyRef.current = currency;
+      return;
+    }
+    const prev = prevCurrencyRef.current;
+    if (prev === currency) return;
+
+    setParams((p) => {
+      const next = { ...p };
+      for (const name of MONEY_FIELD_NAMES) {
+        next[name] = convertAmountRounded(p[name], prev, currency, ratesUsd);
+      }
+      return next;
+    });
+    setResults([]);
+    prevCurrencyRef.current = currency;
+  }, [currency, ratesUsd, ratesStatus]);
 
   const handleInputChange = (e) => {
     const { name, type, checked } = e.target;
