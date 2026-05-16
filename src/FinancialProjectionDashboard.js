@@ -147,6 +147,47 @@ function InfoHint({ text, label, className }) {
   );
 }
 
+/** Pure projection timeline from current numeric params (same model as the Calculate button). */
+function computeProjectionData(params) {
+  let years = 0;
+  let portfolio = params.initialPortfolio;
+  const projectionData = [
+    {
+      year: 0,
+      portfolio,
+      growth: 0,
+      investment: 0,
+      expenses: params.initialExpenses,
+      income: params.initialPostTaxIncome,
+    },
+  ];
+
+  const adjustedXIRR = params.adjustForInflation ? params.xirr - params.inflationRate : params.xirr;
+  const adjustedIncomeGrowthRate = params.adjustForInflation
+    ? (1 + params.incomeGrowthRate) / (1 + params.inflationRate) - 1
+    : params.incomeGrowthRate;
+
+  while (portfolio < params.targetValue) {
+    const postTaxIncome = params.initialPostTaxIncome * Math.pow(1 + adjustedIncomeGrowthRate, years);
+    const expenses = params.initialExpenses * Math.pow(1 + params.expenseGrowthRate, years);
+    const investment = postTaxIncome - expenses;
+    const previousPortfolio = portfolio;
+    portfolio = portfolio * (1 + adjustedXIRR) + investment;
+    years += 1;
+
+    projectionData.push({
+      year: years,
+      portfolio: Math.round(portfolio),
+      growth: Math.round(portfolio - previousPortfolio),
+      investment: Math.round(investment),
+      expenses: Math.round(expenses),
+      income: Math.round(postTaxIncome),
+    });
+  }
+
+  return projectionData;
+}
+
 const FinancialProjectionDashboard = () => {
   const {
     currency,
@@ -194,6 +235,10 @@ const FinancialProjectionDashboard = () => {
 
   const [results, setResults] = useState([]);
   const prevCurrencyRef = useRef(currency);
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
+  const resultsRef = useRef(results);
+  resultsRef.current = results;
 
   useEffect(() => {
     if (ratesStatus !== 'ready' || !ratesUsd) {
@@ -203,14 +248,15 @@ const FinancialProjectionDashboard = () => {
     const prev = prevCurrencyRef.current;
     if (prev === currency) return;
 
-    setParams((p) => {
-      const next = { ...p };
-      for (const name of MONEY_FIELD_NAMES) {
-        next[name] = convertAmountRounded(p[name], prev, currency, ratesUsd);
-      }
-      return next;
-    });
-    setResults([]);
+    const hadProjection = resultsRef.current.length > 0;
+    const p = paramsRef.current;
+    const next = { ...p };
+    for (const name of MONEY_FIELD_NAMES) {
+      next[name] = convertAmountRounded(p[name], prev, currency, ratesUsd);
+    }
+
+    setParams(next);
+    setResults(hadProjection ? computeProjectionData(next) : []);
     prevCurrencyRef.current = currency;
   }, [currency, ratesUsd, ratesStatus]);
 
@@ -284,41 +330,7 @@ const FinancialProjectionDashboard = () => {
   };
 
   const calculateProjection = useCallback(() => {
-    let years = 0;
-    let portfolio = params.initialPortfolio;
-    const projectionData = [{
-      year: 0,
-      portfolio: portfolio,
-      growth: 0,
-      investment: 0,
-      expenses: params.initialExpenses,
-      income: params.initialPostTaxIncome
-    }];
-
-    const adjustedXIRR = params.adjustForInflation ? params.xirr - params.inflationRate : params.xirr;
-    const adjustedIncomeGrowthRate = params.adjustForInflation 
-      ? (1 + params.incomeGrowthRate) / (1 + params.inflationRate) - 1 
-      : params.incomeGrowthRate;
-
-    while (portfolio < params.targetValue) {
-      const postTaxIncome = params.initialPostTaxIncome * Math.pow(1 + adjustedIncomeGrowthRate, years);
-      const expenses = params.initialExpenses * Math.pow(1 + params.expenseGrowthRate, years);
-      const investment = postTaxIncome - expenses;
-      const previousPortfolio = portfolio;
-      portfolio = portfolio * (1 + adjustedXIRR) + investment;
-      years += 1;
-      
-      projectionData.push({
-        year: years,
-        portfolio: Math.round(portfolio),
-        growth: Math.round(portfolio - previousPortfolio),
-        investment: Math.round(investment),
-        expenses: Math.round(expenses),
-        income: Math.round(postTaxIncome)
-      });
-    }
-
-    setResults(projectionData);
+    setResults(computeProjectionData(params));
   }, [params]);
 
   const { divisor: chartDivisor, unitLabel: chartUnitLabel } = chartScale;
