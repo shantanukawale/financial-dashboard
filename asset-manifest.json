@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/financial-dashboard/static/css/main.d47d7507.css",
-    "main.js": "/financial-dashboard/static/js/main.8746f08d.js",
-    "static/js/453.018c9da1.chunk.js": "/financial-dashboard/static/js/453.018c9da1.chunk.js",
+    "main.css": "/financial-dashboard/static/css/main.e066400f.css",
+    "main.js": "/financial-dashboard/static/js/main.413e6d08.js",
+    "static/js/317.a5b5f2a5.chunk.js": "/financial-dashboard/static/js/317.a5b5f2a5.chunk.js",
     "index.html": "/financial-dashboard/index.html",
-    "main.d47d7507.css.map": "/financial-dashboard/static/css/main.d47d7507.css.map",
-    "main.8746f08d.js.map": "/financial-dashboard/static/js/main.8746f08d.js.map",
-    "453.018c9da1.chunk.js.map": "/financial-dashboard/static/js/453.018c9da1.chunk.js.map"
+    "main.e066400f.css.map": "/financial-dashboard/static/css/main.e066400f.css.map",
+    "main.413e6d08.js.map": "/financial-dashboard/static/js/main.413e6d08.js.map",
+    "317.a5b5f2a5.chunk.js.map": "/financial-dashboard/static/js/317.a5b5f2a5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d47d7507.css",
-    "static/js/main.8746f08d.js"
+    "static/css/main.e066400f.css",
+    "static/js/main.413e6d08.js"
   ]
 }
